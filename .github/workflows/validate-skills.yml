@@ -1,0 +1,44 @@
+name: validate-skills
+
+on:
+  pull_request:
+  push:
+    branches: [main, rc]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Every skill folder has a SKILL.md whose name matches the folder
+        run: |
+          set -euo pipefail
+          fail=0
+          for dir in skills/*/; do
+            [ -d "$dir" ] || continue
+            name="$(basename "$dir")"
+            file="${dir}SKILL.md"
+            if [ ! -f "$file" ]; then
+              echo "::error::Missing $file"
+              fail=1
+              continue
+            fi
+            if ! grep -Eq "^name:[[:space:]]*${name}[[:space:]]*$" "$file"; then
+              echo "::error::$file frontmatter name must equal folder name (${name})"
+              fail=1
+            fi
+          done
+          exit "$fail"
+      - name: No obvious secrets in skills
+        run: |
+          set -euo pipefail
+          # Lightweight guard only. The authoritative denylist runs in the
+          # publish workflow in code-hud/hud before anything lands here.
+          if grep -RInE 'AKIA[0-9A-Z]{16}|BEGIN [A-Z ]*PRIVATE KEY|gh[pousr]_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]+' skills/; then
+            echo "::error::Possible secret found in skills/"
+            exit 1
+          fi
