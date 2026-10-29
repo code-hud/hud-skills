@@ -1,0 +1,232 @@
+{
+  "baseUrl": "http://localhost:3001",
+  "setup": [
+    {
+      "name": "seed",
+      "method": "POST",
+      "path": "/api/tasks",
+      "body": {
+        "title": "seed {{word}}",
+        "priority": "high"
+      },
+      "expect": [
+        201
+      ],
+      "capture": {
+        "taskId": "id"
+      }
+    }
+  ],
+  "endpoints": [
+    {
+      "name": "list",
+      "method": "GET",
+      "path": "/api/tasks",
+      "weight": 6,
+      "tags": [
+        "read"
+      ]
+    },
+    {
+      "name": "create",
+      "method": "POST",
+      "path": "/api/tasks",
+      "body": {
+        "title": "{{word}} {{seq}}",
+        "priority": "low",
+        "due_date": "2026-12-01"
+      },
+      "expect": [
+        201
+      ],
+      "capture": {
+        "taskId": "id"
+      },
+      "weight": 3,
+      "tags": [
+        "write"
+      ]
+    },
+    {
+      "name": "create-default-priority",
+      "method": "POST",
+      "path": "/api/tasks",
+      "body": {
+        "title": "{{word}}"
+      },
+      "expect": [
+        201
+      ],
+      "capture": {
+        "taskId": "id"
+      },
+      "tags": [
+        "write"
+      ]
+    },
+    {
+      "name": "create-no-title",
+      "method": "POST",
+      "path": "/api/tasks",
+      "body": {
+        "priority": "low"
+      },
+      "expect": [
+        400
+      ],
+      "tags": [
+        "client-error"
+      ]
+    },
+    {
+      "name": "create-bad-priority",
+      "method": "POST",
+      "path": "/api/tasks",
+      "body": {
+        "title": "x",
+        "priority": "urgent"
+      },
+      "expect": [
+        400
+      ],
+      "tags": [
+        "client-error"
+      ]
+    },
+    {
+      "name": "create-bad-date",
+      "method": "POST",
+      "path": "/api/tasks",
+      "body": {
+        "title": "x",
+        "due_date": "2026-02-30"
+      },
+      "expect": [
+        400
+      ],
+      "tags": [
+        "client-error"
+      ]
+    },
+    {
+      "name": "update-done",
+      "method": "PATCH",
+      "path": "/api/tasks/{{pool:taskId}}",
+      "body": {
+        "done": true
+      },
+      "expect": [
+        200
+      ],
+      "weight": 2,
+      "tags": [
+        "write"
+      ]
+    },
+    {
+      "name": "update-all",
+      "method": "PATCH",
+      "path": "/api/tasks/{{pool:taskId}}",
+      "body": {
+        "title": "{{word}}",
+        "priority": "high",
+        "due_date": "2027-01-15"
+      },
+      "expect": [
+        200
+      ],
+      "tags": [
+        "write"
+      ]
+    },
+    {
+      "name": "update-empty-title",
+      "method": "PATCH",
+      "path": "/api/tasks/{{pool:taskId}}",
+      "body": {
+        "title": "  "
+      },
+      "expect": [
+        400
+      ],
+      "tags": [
+        "client-error"
+      ]
+    },
+    {
+      "name": "update-no-fields",
+      "method": "PATCH",
+      "path": "/api/tasks/{{pool:taskId}}",
+      "body": {
+        "color": "red"
+      },
+      "expect": [
+        400
+      ],
+      "tags": [
+        "client-error"
+      ]
+    },
+    {
+      "name": "update-missing",
+      "method": "PATCH",
+      "path": "/api/tasks/999999999",
+      "body": {
+        "done": true
+      },
+      "expect": [
+        404
+      ],
+      "tags": [
+        "client-error"
+      ]
+    },
+    {
+      "name": "delete",
+      "method": "DELETE",
+      "path": "/api/tasks/{{take:taskId}}",
+      "expect": [
+        204
+      ],
+      "tags": [
+        "write"
+      ]
+    },
+    {
+      "name": "delete-missing",
+      "method": "DELETE",
+      "path": "/api/tasks/999999999",
+      "expect": [
+        404
+      ],
+      "tags": [
+        "client-error"
+      ]
+    },
+    {
+      "name": "health",
+      "method": "GET",
+      "path": "/api/health",
+      "tags": [
+        "read"
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "name": "coverage",
+      "mode": "sweep",
+      "repeat": 1
+    },
+    {
+      "name": "run",
+      "rate": 1,
+      "duration": "2m",
+      "weights": {
+        "client-error": 0.2
+      },
+      "note": "The mapped requests for the PR's endpoints, about 1 entry/s: success paths plus the validation 4xx on the changed code"
+    }
+  ],
+  "_comment": "Reference plan for the node-todo app (Express + node:sqlite, port 3001). Step 3 sends `--phase coverage` once; the timed run is `--phase run` (2 minutes). Rates follow the light-exercise default (1 entry/s)"
+}

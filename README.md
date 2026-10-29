@@ -13,6 +13,7 @@ npx skills add code-hud/hud-skills
 | :-- | :-- |
 | [`aws-opensearch-observability-stack-mcp`](skills/aws-opensearch-observability-stack-mcp/SKILL.md) | Thin redirect: tells your agent to fetch the live Hud playbooks for the AWS OpenSearch Observability MCP app from [skills.hud.io/aws-opensearch-observability-stack-mcp](https://skills.hud.io/aws-opensearch-observability-stack-mcp) at query time. No playbook content lives in this repo. |
 | [`install-hud-mcp`](skills/install-hud-mcp/SKILL.md) | Connects the Hud MCP to your agent (Claude Code, Cursor and others) on the Hud account your services report to, and confirms what it sees. Other skills can run it with their own answers; you can also run it on its own. |
+| [`hud-local-pov`](skills/hud-local-pov/README.md) | Runs a local proof of value on your own service, on your machine only, with Hud already installed: runs a test instance, sends a short traffic run to a recent PR's changed endpoints to collect the changed code's callers, callees and durations, and writes up what Hud saw. Start from Hud's install skill: ask your agent to "Read https://skills.hud.io/install/skill/install-hud-sdk/SKILL.md and install hud sdk"; when the install is verified locally, it suggests this skill. |
 
 ## How publishing works
 

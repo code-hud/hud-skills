@@ -1,0 +1,40 @@
+{
+  "_about": "Filters and preferences for rank_prs.py. Edit and re-run the ranker; no re-fetch needed. See 02-choose-pr/references/pr-selection.md.",
+
+  "_filters": "minServiceShare: share of the PR's source files Hud sees in the running service. minServiceFiles: at least this many of them. minLines/maxLines: additions + deletions in those service files only, so lockfiles, tests and other services don't count. maxRenameShare: above this share of renamed files, the PR is a move, not a behaviour change.",
+  "filters": {
+    "minServiceShare": 0.6,
+    "minServiceFiles": 2,
+    "minLines": 100,
+    "maxLines": 1000,
+    "maxRenameShare": 0.5
+  },
+
+  "_preferences": "Points per signal that matches. PRs the user wrote or reviewed always sort first; within each group, more points sort first, then the most recent. routes: a changed service file registers HTTP routes. dataAccess: the changed lines build queries or call a database or HTTP client. tests: the PR changes tests (the best source of valid request bodies). type: feat/fix/perf by label or title. focused: its service files sit in at most focusedMaxDirs directories. followUpFix: a later PR fixes this one. described: the description has at least describedMinChars characters or links an issue.",
+  "preferences": {
+    "routes": 2,
+    "dataAccess": 2,
+    "tests": 1,
+    "type": 1,
+    "focused": 1,
+    "followUpFix": 1,
+    "described": 1
+  },
+  "focusedMaxDirs": 3,
+  "describedMinChars": 80,
+
+  "sourceExt": [".py", ".js", ".mjs", ".cjs", ".jsx", ".ts", ".tsx", ".mts", ".cts", ".java", ".kt", ".scala", ".go", ".rb", ".cs", ".php"],
+  "testPath": "(^|/)(tests?|__tests__|spec|e2e|fixtures?)/|(^|/)test_[^/]*\\.py$|_test\\.(py|go)$|\\.(test|spec)\\.[mc]?[jt]sx?$|(IT|Tests?|Spec)\\.(java|kt|scala)$",
+  "skipPath": "(^|/)(node_modules|\\.venv|venv|site-packages|dist|build|target|vendor|migrations|alembic/versions|__generated__|generated)/|\\.min\\.js$|\\.d\\.ts$|\\.pb\\.|_pb2\\.py$",
+
+  "botAuthor": "(\\[bot\\]$|^(dependabot|renovate|github-actions|snyk-bot|greenkeeper)\\b|^app/)",
+  "maintenanceTitle": "^(chore|build|ci|style|deps|test|tests|docs|revert)(\\([^)]*\\))?!?:",
+  "maintenanceLabel": "^(chore|dependencies|deps|documentation|docs|ci|build|tests?)$",
+  "featureTitle": "^(feat|fix|perf)(\\([^)]*\\))?!?:|^(add|fix|improve|speed up|optimi[sz]e)\\b",
+  "featureLabel": "^(feature|enhancement|bug|bugfix|fix|performance|perf)$",
+
+  "_patterns": "routePattern runs over each changed service file's content at the merge commit; dataAccessPattern over the changed lines only.",
+  "routePattern": "\\.(get|post|put|patch|delete)\\(\\s*['\"`]/|@(Get|Post|Put|Patch|Delete|Request)Mapping|@(app|router|bp|blueprint|api)\\.(route|get|post|put|patch|delete|api_route)\\b|\\b(re_)?path\\(\\s*r?['\"]|routing\\s*\\{|\\b(get|post|put|patch|delete|route)\\(\\s*\"/|@Path\\(\\s*\"/|\\bbind\\s+(GET|POST|PUT|PATCH|DELETE)\\b|router\\.register\\(|@(Get|Post|Put|Patch|Delete|Controller)\\(",
+  "dataAccessPattern": "\\b(select|insert|update|delete)\\b.*\\b(from|into|set|where)\\b|\\.(query|execute|executemany|raw|filter|filter_by|where|join|order_by|group_by|aggregate|find|findOne|findMany|findUnique|findAll|findBy\\w*|createQueryBuilder|create|upsert|save|bulk_create)\\(|@Query\\b|\\btransaction\\s*\\{|\\bdsl\\.|\\b(session|cursor|conn|db|prisma|knex|repository|repo|em|entityManager|jdbcTemplate)\\.|\\b(requests|httpx|aiohttp|axios|fetch|got|RestTemplate|WebClient|HttpClient|OkHttp)\\b",
+  "sideEffectPath": "(email|e-mail|sms|notif|invit|pay|charge|checkout|refund|purchase|webhook|/ai\\b|/ai/|openai|llm|scrape|backup|restore|export|import|migrat)"
+}

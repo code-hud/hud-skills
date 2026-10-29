@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+# A run's files belong at the user's repo root; never commit one made in the skill folder.
+.hud-local-pov/
